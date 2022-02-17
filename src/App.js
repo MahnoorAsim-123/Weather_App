@@ -1,25 +1,11 @@
-import logo from './logo.svg';
-import './App.css';
+import Weather from "./weather";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+     <Weather/>
   );
 }
 
 export default App;
+
+// https://api.openweathermap.org/data/2.5/weather?q=karachi&appid=8339e1e8e05bdd978bd819f34db35976&units=metric
