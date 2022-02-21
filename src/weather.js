@@ -11,12 +11,49 @@ import {BsFillSunFill } from 'react-icons/bs';
 const WeatherApp = () => {
 
   const [weatherData , setWeatherData] = useState({});
-  const [city , setCity] = useState('Karachi');
-  const [findCity , setFindCity] = useState('Karachi');
+  const [city , setCity] = useState('London');
+  const [findCity , setFindCity] = useState({});
+  const [searchCity , setSearchCity] = useState("");
 
-  useEffect(() => {
+  // geoLocation 
 
-    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=8339e1e8e05bdd978bd819f34db35976&units=metric`)
+  useEffect( () => {
+
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          function (position){
+            // console.log(position);
+            setFindCity(position);
+            setCity("");
+
+          },
+
+          function (error){
+            setSearchCity(city)
+          }
+
+        );
+      } else {
+        alert("Geolocation is not supported by this browser.");
+      }
+    }
+    
+    getLocation();
+    
+ 
+
+  }, []);
+
+  useEffect( () => {
+    let searchQuery = 
+    findCity && findCity.coords 
+    ? `lat=${findCity.coords.latitude}&lon=${findCity.coords.longitude}` 
+    : `q=${searchCity ? searchCity : city}`;
+  
+    fetch(
+      `https://api.openweathermap.org/data/2.5/weather?${searchQuery}&appid=8339e1e8e05bdd978bd819f34db35976&units=metric`
+      )
     .then((res) => res.json())
     .then((result) => {
        setWeatherData(result)
@@ -24,18 +61,23 @@ const WeatherApp = () => {
     .catch((err) => {
        console.log("Error" ,err)
     });
+     
+  }, [searchCity , findCity]);
 
-  }, [city]);
+
 
 
   // search btn
   const searchBtnn = (e) => {
-    setFindCity(city)
+    setSearchCity(city);
+    setFindCity({});
   };
 
-
+  
     return(
     <>
+      
+       
     <div className="mainContainer">
             
       <div className="topContainer">
@@ -127,11 +169,11 @@ const WeatherApp = () => {
            <h1>{weatherData && weatherData.main && weatherData.main.humidity}%</h1>
            </div>
            <div className="dc1">
-           <h1>{weatherData && weatherData.main && weatherData.main.temp_max}<sup>o</sup></h1>
+           <h1>{weatherData?.weather && weatherData?.weather[0]?.main} </h1>
            </div>
          </div>
 
-      
+        
       </div>
 
       
@@ -142,11 +184,11 @@ const WeatherApp = () => {
 
 
     </div>
-    
-    
+   
     </>
-    )
 
+    )
+    
 };
 
 export default WeatherApp;
